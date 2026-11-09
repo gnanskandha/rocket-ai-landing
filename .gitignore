@@ -1,0 +1,19 @@
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Trained AI models (too large for GitHub)
+*.zip
+
+# Videos
+videos/
+*.mp4
+
+# IDE files
+.idea/
+.vscode/
