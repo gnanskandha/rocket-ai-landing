@@ -1,6 +1,6 @@
+streamlit
 gymnasium[box2d]
 stable-baselines3[extra]
 moviepy
-streamlit
 imageio[ffmpeg]
 torch
