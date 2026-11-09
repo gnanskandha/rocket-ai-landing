@@ -8,7 +8,7 @@ __pycache__/
 *.py[cod]
 
 # Trained AI models (too large for GitHub)
-*.zip
+
 
 # Videos
 videos/
