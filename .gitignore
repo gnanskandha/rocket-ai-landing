@@ -7,8 +7,6 @@ env/
 __pycache__/
 *.py[cod]
 
-# Trained AI models (too large for GitHub)
-
 
 # Videos
 videos/
