@@ -1,0 +1,4 @@
+swig
+cmake
+build-essential
+python3-dev
