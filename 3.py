@@ -1,34 +1,25 @@
+# Watch the baseline agent fly 3 episodes
+import os
+HERE = os.path.dirname(os.path.abspath(__file__))  # models are saved next to this script, so git can see them
+
+import time
 import gymnasium as gym
 from stable_baselines3 import PPO
-import time
 
-MODEL_PATH = r"C:\Users\Admin\PycharmProjects\PythonProject2\.venv\ppo_lander_baseline"
-
-print("Loading the simulation...")
 env = gym.make("LunarLander-v3", render_mode="human")
-print("Loading the trained AI brain...")
-model = PPO.load(MODEL_PATH)
-print("Watching the trained AI fly!")
+model = PPO.load(os.path.join(HERE, "ppo_lander_baseline"))
 
 for episode in range(3):
-    observation, info = env.reset()
-    total_reward = 0
-    steps = 0
-    print(f"Episode {episode + 1} started")
-
+    obs, info = env.reset()
+    total, steps = 0, 0
     while True:
-        action, _states = model.predict(observation, deterministic=True)
-        observation, reward, terminated, truncated, info = env.step(action)
-        env.render()
+        action, _ = model.predict(obs, deterministic=True)
+        obs, reward, terminated, truncated, info = env.step(action)
         time.sleep(0.02)
-        total_reward += reward
+        total += reward
         steps += 1
         if terminated or truncated:
-            print("-" * 30)
-            print(f"Episode {episode + 1} finished!")
-            print(f"Total steps: {steps}")
-            print(f"Total reward: {total_reward:.2f}")
-            print("-" * 30)
+            print(f"episode {episode + 1}: {steps} steps, reward {total:.1f}")
             time.sleep(1)
             break
 

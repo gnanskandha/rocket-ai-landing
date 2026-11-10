@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rocket AI: Reward Shaping Project</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        h1 { color: #58a6ff; text-align: center; font-size: 2.5em; margin-bottom: 10px; }
+        h2 { color: #7ee787; border-bottom: 1px solid #30363d; padding-bottom: 10px; margin-top: 40px; }
+        .subtitle { text-align: center; color: #8b949e; font-size: 1.2em; margin-bottom: 40px; }
+        .card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .card h3 { color: #d2a8ff; margin-top: 0; }
+        video {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 8px;
+            border: 2px solid #30363d;
+            display: block;
+            margin: 20px auto;
+        }
+        .code-block {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            color: #79c0ff;
+            overflow-x: auto;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #238636;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn:hover { background-color: #2ea043; }
+        .center { text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🚀 Rocket AI: Reward Shaping</h1>
+    <p class="subtitle">A Reinforcement Learning project demonstrating Reward Hacking and how to fix it.</p>
+
+    <h2>📖 The Story</h2>
+    <div class="card">
+        <h3>1. The Baseline</h3>
+        <p>We trained a PPO agent using standard Gymnasium rewards. It learned to survive, but struggled to land perfectly between the flags, often just "parachuting" down safely off to the side.</p>
+    </div>
+    <div class="card">
+        <h3>2. The Hack (Reward Hacking) 🎈</h3>
+        <p>We gave the AI a flawed rule: <em>"+1 point every frame if you are upright and slow."</em> Instead of landing, the AI learned to <strong>hover in the air forever</strong> to maximize its score, hitting the 1,000-step time limit without ever touching the ground.</p>
+    </div>
+    <div class="card">
+        <h3>3. The Fix (Reward Shaping) ✅</h3>
+        <p>We added a time penalty (<code>-0.1</code> per step). Suddenly, hovering became expensive. The AI was forced to actually navigate, slow down, and land between the flags to claim the +100 landing bonus before the timer ran out.</p>
+    </div>
+
+    <h2>🎥 Video Showcase</h2>
+    <p class="center">Watch the AI learn to overcome the flawed reward and successfully land.</p>
+
+    <!-- Replace 'videos/corrected.mp4' with your actual video filename if it's different -->
+    <video controls autoplay loop muted>
+        <source src="videos/corrected.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <p class="center"><em>Above: The corrected AI successfully navigating and landing between the flags.</em></p>
+
+    <h2>🛠️ Technical Details</h2>
+    <div class="card">
+        <ul>
+            <li><strong>Environment:</strong> Gymnasium (Box2D Lunar Lander)</li>
+            <li><strong>Algorithm:</strong> PPO (Proximal Policy Optimization) via Stable-Baselines3</li>
+            <li><strong>Training Steps:</strong> 3,000,000+ steps with custom reward shaping</li>
+            <li><strong>Key Insight:</strong> "You get exactly what you reward — not what you want." This is a fundamental challenge in AI Safety.</li>
+        </ul>
+    </div>
+
+    <div class="center">
+        <a href="https://github.com/gnanskandha/rocket-ai-landing" class="btn">View Source Code on GitHub</a>
+    </div>
+</div>
+
+</body>
+</html>

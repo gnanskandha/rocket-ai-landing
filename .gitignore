@@ -8,9 +8,6 @@ __pycache__/
 *.py[cod]
 
 
-# Videos
-videos/
-*.mp4
 
 # IDE files
 .idea/
