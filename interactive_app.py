@@ -71,7 +71,7 @@ def run_episode(model, seed, gravity, wind, kick, render=False, on_frame=None, d
             last = r
             done = term or trunc
             trace.append(total)
-            if on_frame and steps % 2 == 0:  # drawing every frame is too slow online
+            if on_frame:  # Render every frame for smooth animation
                 on_frame(env.render(), obs, int(action), total, steps)
                 time.sleep(delay)
     finally:
