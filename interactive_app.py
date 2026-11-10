@@ -3,13 +3,14 @@
 # (terrain, gravity, wind, a sideways shove at the start) to see how they cope.
 
 import glob
+import io
 import os
-import time
 
 import gymnasium as gym
 import numpy as np
 import pandas as pd
 import streamlit as st
+from PIL import Image
 from stable_baselines3 import PPO
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -55,8 +56,9 @@ def make_env(gravity, wind, render):
     )
 
 
-def run_episode(model, seed, gravity, wind, kick, render=False, on_frame=None, delay=0.0):
-    env = make_env(gravity, wind, render)
+def run_episode(model, seed, gravity, wind, kick, record=False):
+    env = make_env(gravity, wind, record)
+    frames = []
     try:
         obs, _ = env.reset(seed=seed)
         if kick:
@@ -71,14 +73,24 @@ def run_episode(model, seed, gravity, wind, kick, render=False, on_frame=None, d
             last = r
             done = term or trunc
             trace.append(total)
-            if on_frame:  # Render every frame for smooth animation
-                on_frame(env.render(), obs, int(action), total, steps)
-                time.sleep(delay)
+            if record and steps % 2 == 0:  # every 2nd frame is enough for a smooth gif
+                frames.append(env.render())
     finally:
         env.close()
     # the env gives exactly +100 for a landing and -100 for a crash / leaving the screen
     result = "landed" if last >= 100 else "crashed" if last <= -100 else "timeout"
-    return total, steps, trace, result
+    return total, steps, trace, result, frames
+
+
+def make_gif(frames, ms):
+    """streaming frames live to the browser kept dropping them, so I play back a gif instead"""
+    imgs = [
+        Image.fromarray(f).resize((480, 320)).convert("P", palette=Image.ADAPTIVE, colors=64)
+        for f in frames
+    ]
+    buf = io.BytesIO()
+    imgs[0].save(buf, format="GIF", save_all=True, append_images=imgs[1:], duration=ms, loop=0)
+    return buf.getvalue()
 
 
 # ---------- sidebar ----------
@@ -94,7 +106,7 @@ seed = st.sidebar.number_input("terrain seed", 0, 9999, 0)
 gravity = st.sidebar.slider("gravity", -11.5, -2.0, -10.0, 0.5)
 wind = st.sidebar.slider("wind", 0.0, 20.0, 0.0, 1.0)
 kick = st.sidebar.slider("sideways shove at start", -20, 20, 0, 1)
-delay_ms = st.sidebar.slider("delay per frame (ms)", 0, 60, 15, 5)
+frame_ms = st.sidebar.slider("playback (ms per frame, higher = slower)", 20, 100, 40, 10)
 
 # ---------- main page ----------
 st.title("Lunar lander lab")
@@ -107,39 +119,28 @@ tab_fly, tab_test = st.tabs(["Fly one episode", "Stress test"])
 
 with tab_fly:
     go = st.button("Launch", type="primary")
-    left, right = st.columns([3, 1])
-    view = left.empty()
-    readout = right.empty()
+    view = st.empty()
 
     if go:
-        def draw(frame, obs, action, total, steps):
-            x, y, vx, vy, ang, _, l1, l2 = obs
-            view.image(frame)
-            readout.code(
-                f"step    {steps:>5}\n"
-                f"engine  {ACTIONS[action]}\n"
-                f"x       {x:>7.2f}\n"
-                f"y       {y:>7.2f}\n"
-                f"vx      {vx:>7.2f}\n"
-                f"vy      {vy:>7.2f}\n"
-                f"angle   {ang:>7.2f}\n"
-                f"legs    {int(l1)} {int(l2)}\n"
-                f"reward  {total:>7.1f}",
-                language=None,
+        with st.spinner("simulating the flight..."):
+            total, steps, trace, result, frames = run_episode(
+                load_model(models[choice]), seed, gravity, wind, kick, record=True
             )
-
-        total, steps, trace, result = run_episode(
-            load_model(models[choice]), seed, gravity, wind, kick, True, draw, delay_ms / 1000
-        )
+            if frames:
+                view.image(make_gif(frames, frame_ms))
         msg = f"{result}: {steps} steps, total reward {total:.1f}"
         {"landed": st.success, "crashed": st.error}.get(result, st.warning)(msg)
+        c1, c2, c3 = st.columns(3)
+        c1.metric("steps", steps)
+        c2.metric("total reward", f"{total:.1f}")
+        c3.metric("result", result)
         st.line_chart(pd.DataFrame({"total reward": trace}))
     else:
         env = make_env(gravity, wind, True)
         env.reset(seed=seed)
         view.image(env.render())
         env.close()
-        readout.caption("Set things up in the sidebar, then hit Launch.")
+        st.caption("Set things up in the sidebar, then hit Launch.")
 
 with tab_test:
     st.write("Runs each model on seeds 0..N with the current gravity / wind / shove, no video, and counts what happens.")
