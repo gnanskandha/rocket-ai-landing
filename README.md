@@ -5,7 +5,7 @@ I trained PPO agents to land the LunarLander from Gymnasium, then changed the re
 **Live app:** https://rocket-ai-landing-u52e6ggcf6u3g5iuwvausq.streamlit.app  
 **Project page:** https://github.com/gnanskandha/rocket-ai-landing
 
-![results]<img width="1050" height="570" alt="results" src="https://github.com/user-attachments/assets/5652a9f7-4e7a-4f24-82a0-99e43c8967d6" />
+[results]<img width="1050" height="570" alt="results" src="https://github.com/user-attachments/assets/5652a9f7-4e7a-4f24-82a0-99e43c8967d6" />
 
 
 ## Results
@@ -39,7 +39,7 @@ All agents use PPO (Stable-Baselines3, MlpPolicy, seed 42) on `LunarLander-v3`. 
 
 ## The interactive app
 
-`interactive_app.py` is a Streamlit app that loads the trained models and lets you test them:
+(https://rocket-ai-landing-kiy2tnuvxhowyujozehbva.streamlit.app/) is a Streamlit app that loads the trained models and lets you test them:
 
 - choose which model flies
 - terrain seed, wind, and a sideways shove at the start
@@ -98,3 +98,5 @@ packages.txt              system packages for streamlit cloud
 1. Push the code and the `.zip` models to the repo root. Do not save models inside `.venv/`, because it is gitignored.
 2. Main file: `interactive_app.py`.
 3. `packages.txt` installs `swig`, which the Box2D build needs.
+
+
