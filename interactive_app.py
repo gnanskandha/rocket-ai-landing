@@ -104,7 +104,13 @@ names = list(models)
 st.sidebar.header("Settings")
 choice = st.sidebar.selectbox("model", names, index=names.index("corrected reward") if "corrected reward" in names else 0)
 seed = st.sidebar.number_input("terrain seed", 0, 9999, 0)
-gravity = st.sidebar.slider("gravity", -11.0, -5.0, -10.0, 0.5)
+# every model was trained at gravity -10, so that is the default and it stays locked
+# unless you open "advanced" and tick the box
+with st.sidebar.expander("advanced"):
+    unlock = st.checkbox("unlock gravity (models were only trained at -10, expect crashes)")
+    gravity = st.slider("gravity", -11.5, -2.0, -10.0, 0.5, disabled=not unlock)
+if not unlock:
+    gravity = -10.0
 wind = st.sidebar.slider("wind", 0.0, 20.0, 0.0, 1.0)
 kick = st.sidebar.slider("sideways shove at start", -20, 20, 0, 1)
 frame_ms = st.sidebar.slider("playback (ms per frame, higher = slower)", 20, 100, 40, 10)
